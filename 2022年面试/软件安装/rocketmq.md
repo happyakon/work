@@ -21,48 +21,74 @@ sh bin/mqshutdown broker
 
 ```
 
-#### 1.2. 常用命令
+#### 1.2. broker配置
 
-| 命令                 | 说明                               |
-| -------------------- | ---------------------------------- |
-| ls path              | 查看节点                           |
-| ls -s path           | 查看节点详细信息                   |
-| ls -R path           | 查看该节点的所有子节点             |
-| ls -w path           | 监听节点                           |
-| create path data     | 创建永久节点                       |
-| create -s path data  | 创建永久顺序节点                   |
-| create -e path data  | 创建临时节点                       |
-| create -es path data | 创建顺序临时节点                   |
-| set path data        | 修改存在的节点的数据               |
-| set -s path data     | 修改存在的节点的数据并返回详细信息 |
-| get path             | 获取节点值                         |
-| get -s path          | 获取节点值和详细数据               |
-| get -w path          | 获取节点值，并监听此节点           |
-| stat path            | 查看节点详细信息                   |
-| stat -w path         | 查看节点详细信息，并监听此节点     |
+```properties
+#broker 默认的配置文件位置在：conf/broker.conf
 
-
-
-### 2.融合SpringBoot
-
-#### 2.1 引入依赖
-
-```java
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
-    <version>3.1.1</version>
-</dependency>
+#所属集群名字
+brokerClusterName=rocketmq-cluster
+#broker名字，注意此处不同的配置文件填写的不一样
+brokerName=broker-a
+#0 表示 Master，>0 表示 Slave
+brokerId=0
+#nameServer地址，分号分割
+namesrvAddr=rocketmq-nameserver1:9876;rocketmq-nameserver2:9876
+#在发送消息时，自动创建服务器不存在的topic，默认创建的队列数
+defaultTopicQueueNums=4
+#是否允许 Broker 自动创建Topic，建议线下开启，线上关闭
+autoCreateTopicEnable=true
+#是否允许 Broker 自动创建订阅组，建议线下开启，线上关闭
+autoCreateSubscriptionGroup=true
+#Broker 对外服务的监听端口
+listenPort=10911
+#删除文件时间点，默认凌晨 4点
+deleteWhen=04
+#文件保留时间，默认 48 小时
+fileReservedTime=120
+#commitLog每个文件的大小默认1G
+mapedFileSizeCommitLog=1073741824
+#ConsumeQueue每个文件默认存30W条，根据业务情况调整
+mapedFileSizeConsumeQueue=300000
+#destroyMapedFileIntervalForcibly=120000
+#redeleteHangedFileInterval=120000
+#检测物理文件磁盘空间
+diskMaxUsedSpaceRatio=88
+#存储路径
+storePathRootDir=/usr/local/rocketmq/store
+#commitLog 存储路径
+storePathCommitLog=/usr/local/rocketmq/store/commitlog
+#消费队列存储路径存储路径
+storePathConsumeQueue=/usr/local/rocketmq/store/consumequeue
+#消息索引存储路径
+storePathIndex=/usr/local/rocketmq/store/index
+#checkpoint 文件存储路径
+storeCheckpoint=/usr/local/rocketmq/store/checkpoint
+#abort 文件存储路径
+abortFile=/usr/local/rocketmq/store/abort
+#限制的消息大小
+maxMessageSize=65536
+#flushCommitLogLeastPages=4
+#flushConsumeQueueLeastPages=2
+#flushCommitLogThoroughInterval=10000
+#flushConsumeQueueThoroughInterval=60000
+#Broker 的角色
+#- ASYNC_MASTER 异步复制Master
+#- SYNC_MASTER 同步双写Master
+#- SLAVE
+brokerRole=SYNC_MASTER
+#刷盘方式
+#- ASYNC_FLUSH 异步刷盘
+#- SYNC_FLUSH 同步刷盘
+flushDiskType=SYNC_FLUSH
+#checkTransactionMessageEnable=false
+#发消息线程池数量
+sendMessageThreadPoolNums=128
+#拉消息线程池数量
+pullMessageThreadPoolNums=128
 ```
 
-#### 2.2 配置yaml
 
-```yaml
-spring:
-  application:
-    name: zooker-spring-mysql
-  cloud:
-    zookeeper:
-      connect-string: 192.168.2.109:2181
-```
+
+#### 
 
